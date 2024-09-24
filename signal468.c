@@ -57,7 +57,7 @@ int main() {
 
     } else if (pid > 0) { // if pid > 0, this is the parent process 
 
-        printf("Parent begins: address of proc_state = %p\n", (void*)&proc_state); 
+        printf("Parent begins: address of proc_state = %p\n", (void*)&proc_state);
 
         //Parent process sends signals to the child every second
         for (int i = 0; i < 3; i++) {
