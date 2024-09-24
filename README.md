@@ -44,12 +44,14 @@ When working with signals and processes in C, especially in parent-child relatio
    - Use the `signal()` function to register a signal handler for a specific signal (e.g., `SIGUSR1`).
    - The signal handler should be simple and efficient because it executes asynchronously. Avoid calling non-reentrant functions like `printf()` inside the handler. Instead, use simple, signal-safe operations like modifying variables.
    - Example for setting up the signal handler:
+     
      ```c
      signal(SIGUSR1, sig_handler);  // Register sig_handler for SIGUSR1
      ```
 
 ## 2. **Parent-Child Process Communication**
    - **Parent Process**: Use `kill()` to send signals from the parent to the child. The `kill()` function requires the process ID of the child and the signal you want to send.
+     
      ```c
      kill(child_pid, SIGUSR1);  // Send SIGUSR1 signal to child
      ```
@@ -61,6 +63,7 @@ When working with signals and processes in C, especially in parent-child relatio
 ## 4. **Error Handling**
    - Always check for errors after system calls like `fork()` and `signal()`. If `fork()` fails, it returns `-1`, and you should handle this case properly.
    - Use `perror()` to output error messages for system call failures.
+     
      ```c
      if (fork() == -1) {
          perror("fork failed");
@@ -70,5 +73,6 @@ When working with signals and processes in C, especially in parent-child relatio
 
 ## 5. **Process Termination**
    - Ensure that the parent waits for the child to finish by calling `wait(NULL)`. This prevents zombie processes and ensures proper process cleanup.
+     
      ```c
      wait(NULL);  // Wait for child to finish
