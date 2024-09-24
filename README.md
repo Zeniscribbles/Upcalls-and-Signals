@@ -34,3 +34,41 @@ Parent: proc_state = 0, address = 0x404068
 Parent: proc_state = 0, address = 0x404068
 Parent: proc_state = 0, address = 0x404068
 Parent: bye bye
+```
+
+# Tips and Helpful Information for Signal Handling in C
+
+When working with signals and processes in C, especially in parent-child relationships, there are several key points and best practices to keep in mind. These tips can help improve the reliability and clarity of your program.
+
+## 1. **Signal Handling Setup**
+   - Use the `signal()` function to register a signal handler for a specific signal (e.g., `SIGUSR1`).
+   - The signal handler should be simple and efficient because it executes asynchronously. Avoid calling non-reentrant functions like `printf()` inside the handler. Instead, use simple, signal-safe operations like modifying variables.
+   - Example for setting up the signal handler:
+     ```c
+     signal(SIGUSR1, sig_handler);  // Register sig_handler for SIGUSR1
+     ```
+
+## 2. **Parent-Child Process Communication**
+   - **Parent Process**: Use `kill()` to send signals from the parent to the child. The `kill()` function requires the process ID of the child and the signal you want to send.
+     ```c
+     kill(child_pid, SIGUSR1);  // Send SIGUSR1 signal to child
+     ```
+   - **Child Process**: The child needs to listen for signals and modify its state upon receiving them using the signal handler.
+
+## 3. **Global Variables and Process Address Space**
+   - Both the parent and child processes have their own copies of global variables. Even though they share the same addresses (since they start from the same memory layout after `fork()`), the variables are **not** shared between processes. They exist in separate memory spaces. This explains why `proc_state` has the same address in both parent and child but different values.
+
+## 4. **Error Handling**
+   - Always check for errors after system calls like `fork()` and `signal()`. If `fork()` fails, it returns `-1`, and you should handle this case properly.
+   - Use `perror()` to output error messages for system call failures.
+     ```c
+     if (fork() == -1) {
+         perror("fork failed");
+         exit(EXIT_FAILURE);  // Exit if fork fails
+     }
+     ```
+
+## 5. **Process Termination**
+   - Ensure that the parent waits for the child to finish by calling `wait(NULL)`. This prevents zombie processes and ensures proper process cleanup.
+     ```c
+     wait(NULL);  // Wait for child to finish
