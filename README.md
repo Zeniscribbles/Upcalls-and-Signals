@@ -35,6 +35,18 @@ Parent: proc_state = 0, address = 0x404068
 Parent: proc_state = 0, address = 0x404068
 Parent: bye bye
 ```
+### Did you notice?...Why Do Parent and Child Processes Have `proc_state` at the Same Address but with Different Values?
+ **This behavior occurs due to the nature of process forking in operating systems like Linux.**
+
+- **Separate Address Spaces**: When a process is forked, the parent and child processes have independent memory spaces, even though they initially share the same virtual memory layout. Each process can modify its own variables without affecting the other.
+  
+- **Same Virtual Address, Different Physical Memory**: Both processes have `proc_state` at the same virtual address, but due to **address space isolation**, they point to different physical memory locations after the fork.
+
+- **Copy-on-Write (COW)**: The operating system employs a technique called **Copy-on-Write (COW)**. Initially, the parent and child share the same physical memory pages. However, when one process modifies `proc_state`, the OS creates a separate copy of the memory page for that process.
+
+While the address appears the same, the values differ because the parent and child have independent copies of `proc_state`.
+
+
 
 # Tips and Helpful Information for Signal Handling in C
 
