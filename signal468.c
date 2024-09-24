@@ -37,7 +37,7 @@ int main() {
 
     // If fork() == 0, we are in the child process
     if (pid == 0) {   
-        printf("Child begins: address of proc_state = %x\n", &proc_state);
+        printf("Child begins: address of proc_state = %p\n", (void*)&proc_state); 
 
      
         pid_t child_id = getpid();    // Get the child process ID
@@ -47,7 +47,7 @@ int main() {
 
         // Loop for the child process to print proc_state and wait for signals
         for (int i = 0; i < 6; i++) {
-            printf("Child: proc_state = %d, address = %#x\n", proc_state, &proc_state);
+            printf("Child: proc_state = %d, address = %p\n", proc_state, (void*)&proc_state); 
             sleep(1);  
         }
 
@@ -57,13 +57,12 @@ int main() {
 
     } else if (pid > 0) { // if pid > 0, this is the parent process 
 
-        printf("Parent begins: address of proc_state = %#x\n", &proc_state);
+        printf("Parent begins: address of proc_state = %p\n", (void*)&proc_state); 
 
         //Parent process sends signals to the child every second
         for (int i = 0; i < 3; i++) {
             sleep(1);  // Sleep for 1 second before sending the signal
-            printf("Parent: proc_state = %d, address = %#x\n", proc_state, &proc_state);
-            
+            printf("Parent: proc_state = %d, address = %p\n", proc_state, (void*)&proc_state);             
             // Modified: Send SIGUSR1 signal to the child process
             kill(pid, SIGUSR1);  // `pid` is the child process ID
         }
@@ -73,8 +72,7 @@ int main() {
         wait(NULL);  // Wait for child process to terminate
 
         // Final Parent Process: state and goodbye message 
-        printf("Parent: proc_state = %d, address = %#x\n", proc_state, &proc_state);
-        printf("Parent: bye bye\n");
+        printf("Parent: proc_state = %d, address = %p\n", proc_state, (void*)&proc_state);         printf("Parent: bye bye\n");
 
     } else {
         
